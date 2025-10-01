@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/screens/dashboard_screen.dart';
 import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -10,13 +11,13 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _email = TextEditingController();
-  final _pass = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   void dispose() {
-    _email.dispose();
-    _pass.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -31,7 +32,11 @@ class _LoginScreenState extends State<LoginScreen> {
         );
 
     // tombol biru dengan gradient (UI-only)
-    Widget primaryButton(String label, VoidCallback onTap) => GestureDetector(
+    Widget primaryButton({
+      required String label,
+      required VoidCallback onTap,
+    }) =>
+        GestureDetector(
           onTap: onTap,
           child: Container(
             width: double.infinity,
@@ -114,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       requiredLabel('Email Address'),
                       const SizedBox(height: 6),
                       TextField(
-                        controller: _email,
+                        controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         decoration: const InputDecoration(
                           hintText: 'Enter your email',
@@ -125,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       requiredLabel('Password'),
                       const SizedBox(height: 6),
                       TextField(
-                        controller: _pass,
+                        controller: _passwordController,
                         obscureText: true,
                         decoration: const InputDecoration(
                           hintText: 'Enter your password',
@@ -146,11 +151,31 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 6),
 
-                      primaryButton('Sign In Now', () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Sign In tapped')),
-                        );
-                      }),
+                      primaryButton(
+                        label: 'Sign In Now',
+                        onTap: () {
+                          // Cek apakah email atau password kosong
+                          if (_emailController.text.isEmpty ||
+                              _passwordController.text.isEmpty) {
+                            // Jika ya, tampilkan notifikasi error
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'Email dan Password tidak boleh kosong!'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          } else {
+                            // Jika tidak, lanjutkan ke dashboard
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              DashboardScreen.route,
+                              (route) => false,
+                            );
+                          }
+                        },
+                      ),
+
                       const SizedBox(height: 14),
 
                       Center(
